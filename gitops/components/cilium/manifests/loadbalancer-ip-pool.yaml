@@ -1,6 +1,6 @@
 # Pool of LAN IPs Cilium hands to Services of type LoadBalancer.
 # Must be free, unused IPs on the node network (outside any DHCP range).
-apiVersion: cilium.io/v2
+apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: homelab-pool
