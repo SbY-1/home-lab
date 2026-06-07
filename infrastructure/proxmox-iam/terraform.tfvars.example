@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored.
+
+proxmox_endpoint        = "https://pve.lan:8006/"
+proxmox_insecure        = true
+proxmox_admin_api_token = "root@pam!terraform-bootstrap=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# Optional overrides:
+# tf_user_id  = "terraform@pve"
+# tf_role_id  = "TerraformProv"
+# tf_token_id = "provisioner"
+# acl_path    = "/"   # tighten to e.g. "/pool/homelab" to reduce blast radius

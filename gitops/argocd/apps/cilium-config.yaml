@@ -1,0 +1,29 @@
+# Cilium runtime config (LoadBalancer IP pool + L2 announcement policy).
+# Cilium itself is installed at bootstrap via Talos inline manifests; this app
+# manages its day-2 LAN-exposure configuration through GitOps.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cilium-config
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: platform
+  source:
+    repoURL: https://github.com/CHANGEME/home-lab.git
+    targetRevision: main
+    path: gitops/components/cilium/manifests
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,17 @@
+# ingress-nginx Helm values.
+# The controller is exposed via a Cilium LoadBalancer IP (from homelab-pool).
+controller:
+  replicaCount: 1
+  service:
+    type: LoadBalancer
+    # Optionally pin a specific IP from the Cilium pool:
+    # loadBalancerIP: 192.168.1.200
+  ingressClassResource:
+    default: true
+  # Smaller footprint for a homelab.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  metrics:
+    enabled: true # scraped by kube-prometheus-stack

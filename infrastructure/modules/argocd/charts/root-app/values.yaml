@@ -1,0 +1,5 @@
+# Overridden by the helm_release in modules/argocd/main.tf.
+namespace: argocd
+repoURL: https://github.com/CHANGEME/home-lab.git
+targetRevision: main
+path: gitops/argocd

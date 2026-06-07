@@ -1,0 +1,10 @@
+# cert-manager Helm values.
+crds:
+  enabled: true # install CRDs as part of the chart
+replicaCount: 1
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+# ClusterIssuers (e.g. Let's Encrypt / internal CA) can be added as extra
+# manifests later under gitops/components/cert-manager/.

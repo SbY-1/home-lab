@@ -1,0 +1,20 @@
+# Per-control-plane-node machine config patch.
+# Hostname is intentionally NOT set here — Proxmox cloud-init already sets it to
+# the VM name; setting it again fails Talos validation ("static hostname is
+# already set in v1alpha1 config").
+machine:
+  network:
+    interfaces:
+      - deviceSelector:
+          physical: true
+        dhcp: false
+        addresses:
+          - ${address}/${network_cidr}
+        routes:
+          - network: 0.0.0.0/0
+            gateway: ${gateway}
+        # Shared Virtual IP for the Kubernetes API endpoint (HA-ready).
+        vip:
+          ip: ${cluster_vip}
+  install:
+    disk: ${install_disk}

@@ -1,0 +1,38 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored.
+# One root, one state: provisions VMs + Talos/Cilium + ArgoCD in a single apply.
+
+# --- Proxmox connection (token from the proxmox-iam stage) ---
+proxmox_endpoint  = "https://pve.lan:8006/"
+proxmox_insecure  = true
+proxmox_api_token = "terraform@pve!provisioner=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+proxmox_node      = "pve"
+proxmox_datastore = "local-lvm" # VM disks
+image_datastore   = "local"     # must have the 'import' content type (file-based)
+
+# --- Networking ---
+network_bridge = "vmbr0"
+network_vlan   = null
+network_cidr   = 24
+gateway        = "192.168.1.1"
+dns_servers    = ["192.168.1.1", "1.1.1.1"]
+cluster_vip    = "192.168.1.100" # free IP for the Kubernetes API VIP
+
+# --- Cluster / versions ---
+cluster_name       = "homelab"
+talos_version      = "v1.13.2"
+kubernetes_version = "v1.36.1"
+cilium_version     = "1.17.4"
+
+# --- Node topology (key = hostname). Add entries to scale out. ---
+controlplane_nodes = {
+  "talos-cp-01" = { vm_id = 8001, address = "192.168.1.101" }
+}
+worker_nodes = {
+  "talos-worker-01" = { vm_id = 8011, address = "192.168.1.111" }
+  "talos-worker-02" = { vm_id = 8012, address = "192.168.1.112" }
+}
+
+# --- ArgoCD / GitOps ---
+gitops_repo_url      = "https://github.com/<you>/home-lab.git"
+gitops_repo_revision = "main"
+# argocd_chart_version = "7.8.2"

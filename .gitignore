@@ -1,0 +1,34 @@
+# ---- Terraform ----
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+# real values at any depth; commit only *.tfvars.example
+*.tfvars
+!*.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl # remove this line if you prefer to commit the lock file
+.terraformrc
+terraform.rc
+
+# ---- Cluster credentials / generated artifacts ----
+kubeconfig
+*.kubeconfig
+talosconfig
+*.talosconfig
+*.secret
+*.secret.yaml
+secrets.yaml
+# generated SSH private keys
+ssh-*.key
+*.pem
+
+# ---- Editor / OS ----
+.DS_Store
+.idea/
+.vscode/
+*.swp
