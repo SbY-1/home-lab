@@ -3,8 +3,8 @@
 # --- Prometheus ---
 prometheus:
   prometheusSpec:
-    retention: 15d
-    retentionSize: 8GB
+    # retention: 15d
+    # retentionSize: 8GB
     resources:
       requests:
         cpu: 200m
@@ -16,13 +16,13 @@ prometheus:
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
     ruleSelectorNilUsesHelmValues: false
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 10Gi
+    # storageSpec:
+    #   volumeClaimTemplate:
+    #     spec:
+    #       accessModes: ["ReadWriteOnce"]
+    #       resources:
+    #         requests:
+    #           storage: 10Gi
 
 # --- Alertmanager ---
 alertmanager:
@@ -31,13 +31,13 @@ alertmanager:
       requests:
         cpu: 50m
         memory: 128Mi
-    storage:
-      volumeClaimTemplate:
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 2Gi
+    # storage:
+    #   volumeClaimTemplate:
+    #     spec:
+    #       accessModes: ["ReadWriteOnce"]
+    #       resources:
+    #         requests:
+    #           storage: 2Gi
 
 # --- Grafana ---
 grafana:
@@ -54,19 +54,19 @@ grafana:
     hosts:
       - grafana.home
     path: /
-  persistence:
-    enabled: true
-    size: 5Gi
+  # persistence:
+  #   enabled: true
+  #   size: 5Gi
 
 # Talos exposes etcd/scheduler/controller-manager metrics differently than a
 # kubeadm cluster. These are enabled; if a target is unreachable on Talos,
 # disable the corresponding kube* component below.
-kubeControllerManager:
-  enabled: true
-kubeScheduler:
-  enabled: true
-kubeEtcd:
-  enabled: true
-# kube-proxy is replaced by Cilium, so there is no kube-proxy to scrape.
-kubeProxy:
-  enabled: false
+# kubeControllerManager:
+#   enabled: true
+# kubeScheduler:
+#   enabled: true
+# kubeEtcd:
+#   enabled: true
+# # kube-proxy is replaced by Cilium, so there is no kube-proxy to scrape.
+# kubeProxy:
+#   enabled: false
