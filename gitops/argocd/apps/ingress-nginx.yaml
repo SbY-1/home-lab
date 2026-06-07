@@ -11,7 +11,7 @@ spec:
   project: platform
   sources:
     # Git source only for the values file (referenced as $values).
-    - repoURL: https://github.com/CHANGEME/home-lab.git
+    - repoURL: https://github.com/SbY-1/home-lab.git
       targetRevision: main
       ref: values
     # Helm chart from the upstream repo.

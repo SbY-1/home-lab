@@ -35,7 +35,7 @@ The child Applications reference this repository by URL. Replace the placeholder
 ```bash
 # from the repo root, after creating your GitHub repo
 grep -rl 'github.com/CHANGEME/home-lab' gitops \
-  | xargs sed -i '' 's#https://github.com/CHANGEME/home-lab.git#https://github.com/<you>/home-lab.git#g'
+  | xargs sed -i '' 's#https://github.com/SbY-1/home-lab.git#https://github.com/<you>/home-lab.git#g'
 ```
 
 Use the **same** URL in `infrastructure/terraform.tfvars` (`gitops_repo_url`).

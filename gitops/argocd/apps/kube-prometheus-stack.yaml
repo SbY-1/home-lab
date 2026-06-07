@@ -10,7 +10,7 @@ metadata:
 spec:
   project: monitoring
   sources:
-    - repoURL: https://github.com/CHANGEME/home-lab.git
+    - repoURL: https://github.com/SbY-1/home-lab.git
       targetRevision: main
       ref: values
     - repoURL: https://prometheus-community.github.io/helm-charts
