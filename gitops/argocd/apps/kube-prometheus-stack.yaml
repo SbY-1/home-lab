@@ -26,6 +26,12 @@ spec:
     server: https://kubernetes.default.svc
     namespace: monitoring
   syncPolicy:
+    # node-exporter needs host access (hostNetwork/hostPID/hostPath/hostPort),
+    # which Talos' default 'baseline' PodSecurity forbids — label the namespace
+    # privileged. ArgoCD creates + manages the namespace with this metadata.
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
     automated:
       prune: true
       selfHeal: true

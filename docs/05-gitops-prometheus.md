@@ -50,6 +50,14 @@ kubectl -n monitoring get pods
 kubectl -n monitoring port-forward svc/kube-prometheus-stack-prometheus 9090:9090
 ```
 
+## Pod Security (Talos)
+
+Talos enforces the `baseline` Pod Security Standard on non-system namespaces, but
+`node-exporter` needs host access (hostNetwork/hostPID/hostPath/hostPort). The app labels its
+namespace `pod-security.kubernetes.io/enforce: privileged` via ArgoCD
+`managedNamespaceMetadata`. Symptom if missing:
+`pods "...node-exporter..." is forbidden: violates PodSecurity "baseline:latest"`.
+
 ## Talos-specific notes
 
 - `kubeProxy` scraping is **disabled** — Cilium replaced kube-proxy.
