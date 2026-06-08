@@ -19,11 +19,13 @@ resource "helm_release" "argocd" {
   values = [
     yamlencode({
       configs = {
-        cm = {
-          # Use Server-Side Diff for all apps: diffing is delegated to the
-          # kube-apiserver's schema instead of ArgoCD's older bundled schema.
-          # Fixes "field not declared in schema" errors (e.g. status.terminatingReplicas)
-          # that the structured-merge diff hits with ServerSideApply on newer K8s.
+        # Server-Side Diff for all apps: diffing is delegated to the kube-apiserver's
+        # schema instead of ArgoCD's older bundled schema. Fixes "field not declared
+        # in schema" errors (e.g. status.terminatingReplicas) that the structured-merge
+        # diff hits with ServerSideApply on newer Kubernetes.
+        # NOTE: this key lives in argocd-cmd-params-cm (configs.params), NOT argocd-cm,
+        # and the chart restarts the application-controller when it changes.
+        params = {
           "controller.diff.server.side" = "true"
         }
       }

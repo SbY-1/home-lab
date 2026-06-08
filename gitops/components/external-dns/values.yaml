@@ -1,0 +1,44 @@
+# external-dns → Pi-hole.
+# Creates records in Pi-hole's local DNS for Ingress hosts and LoadBalancer
+# Services, pointing them at the resolved LB/ingress IP. e.g. the Grafana
+# ingress host `grafana.home` becomes an A record → ingress-nginx's LB IP.
+
+provider:
+  name: pihole
+
+# --- Pi-hole connection (EDIT the server URL to your Pi-hole) ---
+extraArgs:
+  - --pihole-server=https://192.168.30.53 # <-- EDIT: your Pi-hole web URL/IP
+  - --pihole-api-version=6 # Pi-hole v6 API (remove this line if you run v5)
+  # - --pihole-tls-skip-verify          # uncomment if Pi-hole uses self-signed HTTPS
+
+# Pi-hole admin/app password, read from a Secret you create out-of-band
+# (see docs/08-external-dns.md — it is not committed to git):
+env:
+  - name: EXTERNAL_DNS_PIHOLE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: external-dns-pihole
+        key: EXTERNAL_DNS_PIHOLE_PASSWORD
+
+# Pi-hole can't store TXT ownership records, so run without a registry and only
+# ever upsert (never delete records external-dns didn't create).
+registry: noop
+policy: upsert-only
+
+# What to watch.
+sources:
+  - ingress
+  - service
+
+# Only manage records under your local domain(s).
+domainFilters:
+  - home
+
+# Reconcile often (homelab).
+interval: 1m
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
