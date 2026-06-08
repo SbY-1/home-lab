@@ -10,7 +10,7 @@ provider:
 extraArgs:
   - --pihole-server=https://192.168.30.53 # <-- EDIT: your Pi-hole web URL/IP
   - --pihole-api-version=6 # Pi-hole v6 API (remove this line if you run v5)
-  # - --pihole-tls-skip-verify          # uncomment if Pi-hole uses self-signed HTTPS
+  - --pihole-tls-skip-verify # Pi-hole serves HTTPS with a self-signed cert
 
 # Pi-hole admin/app password, read from a Secret you create out-of-band
 # (see docs/08-external-dns.md — it is not committed to git):
