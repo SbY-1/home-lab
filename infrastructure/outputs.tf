@@ -23,6 +23,11 @@ output "worker_nodes" {
   value       = module.vms.worker_nodes
 }
 
+output "storage_class" {
+  description = "Default StorageClass backed by Proxmox CSI."
+  value       = module.proxmox_csi.storage_class
+}
+
 output "argocd_namespace" {
   description = "Namespace ArgoCD is installed into."
   value       = module.argocd.namespace

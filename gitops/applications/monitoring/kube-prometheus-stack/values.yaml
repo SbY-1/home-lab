@@ -16,13 +16,15 @@ prometheus:
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
     ruleSelectorNilUsesHelmValues: false
-    # storageSpec:
-    #   volumeClaimTemplate:
-    #     spec:
-    #       accessModes: ["ReadWriteOnce"]
-    #       resources:
-    #         requests:
-    #           storage: 10Gi
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: proxmox # must match infrastructure storage_class_name
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
 
 # --- Alertmanager ---
 alertmanager:
@@ -31,13 +33,14 @@ alertmanager:
       requests:
         cpu: 50m
         memory: 128Mi
-    # storage:
-    #   volumeClaimTemplate:
-    #     spec:
-    #       accessModes: ["ReadWriteOnce"]
-    #       resources:
-    #         requests:
-    #           storage: 2Gi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: proxmox
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi
 
 # --- Grafana ---
 grafana:
@@ -54,9 +57,10 @@ grafana:
     hosts:
       - grafana.home
     path: /
-  # persistence:
-  #   enabled: true
-  #   size: 5Gi
+  persistence:
+    enabled: true
+    storageClassName: proxmox
+    size: 5Gi
 
 # Talos exposes etcd/scheduler/controller-manager metrics differently than a
 # kubeadm cluster. These are enabled; if a target is unreachable on Talos,

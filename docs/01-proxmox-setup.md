@@ -35,8 +35,10 @@ Run on the Proxmox host as root:
 ssh root@pve 'bash -s' < infrastructure/proxmox-iam/bootstrap-pveum.sh
 ```
 
-It creates the role/user/ACL and prints an API token. Copy the token value into
-`infrastructure/terraform.tfvars` → `proxmox_api_token`.
+It creates **both** least-privilege identities and prints their tokens:
+- `terraform@pve!provisioner` → `infrastructure/terraform.tfvars` `proxmox_api_token`
+- `kubernetes-csi@pve!csi` (for the Proxmox CSI storage, see [07](07-storage.md)) →
+  `proxmox_csi_token_id = "kubernetes-csi@pve!csi"` + `proxmox_csi_token_secret = <value>`
 
 ## Option B — manage the identity with Terraform
 

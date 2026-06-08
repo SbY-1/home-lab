@@ -48,6 +48,12 @@ variable "worker_nodes" {
   type        = map(string)
 }
 
+variable "external_cloud_provider" {
+  description = "Run kubelet with --cloud-provider=external (needed for the Proxmox CCM/CSI)."
+  type        = bool
+  default     = true
+}
+
 variable "kubeconfig_path" {
   description = "Where to write the generated kubeconfig file."
   type        = string

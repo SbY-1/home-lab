@@ -41,3 +41,22 @@ variable "acl_path" {
   type        = string
   default     = "/"
 }
+
+# --- Proxmox CSI / CCM identity (storage) ---
+variable "csi_role_id" {
+  description = "Custom role id for the Proxmox CSI + CCM identity."
+  type        = string
+  default     = "CSI"
+}
+
+variable "csi_user_id" {
+  description = "User id (with realm) for the Proxmox CSI + CCM identity."
+  type        = string
+  default     = "kubernetes-csi@pve"
+}
+
+variable "csi_token_id" {
+  description = "Token id created under the CSI user."
+  type        = string
+  default     = "csi"
+}

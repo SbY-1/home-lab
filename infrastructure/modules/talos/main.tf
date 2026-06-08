@@ -8,6 +8,10 @@ locals {
   # Shared cluster-level patch applied to every node:
   #  - Cilium owns the CNI and kube-proxy, so disable Talos' defaults.
   #  - Add the VIP to the API server cert SANs.
+  #  - externalCloudProvider: kubelet runs with --cloud-provider=external so the
+  #    Proxmox cloud-controller-manager can set each node's providerID
+  #    (proxmox://region/vmid) + topology labels — required by the Proxmox CSI.
+  #    Nodes carry the 'uninitialized' taint until the CCM initializes them.
   cluster_shared_patch = yamlencode({
     cluster = {
       network = {
@@ -21,8 +25,24 @@ locals {
       apiServer = {
         certSANs = [var.cluster_vip]
       }
+      externalCloudProvider = {
+        enabled = var.external_cloud_provider
+      }
     }
   })
+
+  # Run kubelet with --cloud-provider=external so each node gets the
+  # 'uninitialized' taint and the Proxmox CCM can set its providerID + topology
+  # labels. Without this, the CSI node plugin fails with empty region/zone.
+  kubelet_external_patch = var.external_cloud_provider ? yamlencode({
+    machine = {
+      kubelet = {
+        extraArgs = {
+          "cloud-provider" = "external"
+        }
+      }
+    }
+  }) : ""
 
   # Cilium is bootstrapped as an inlineManifest on the control plane only.
   cilium_inline_patch = yamlencode({
@@ -49,10 +69,11 @@ data "talos_machine_configuration" "controlplane" {
   talos_version      = var.talos_version
   kubernetes_version = var.kubernetes_version
 
-  config_patches = [
+  config_patches = compact([
     local.cluster_shared_patch,
+    local.kubelet_external_patch,
     local.cilium_inline_patch,
-  ]
+  ])
 }
 
 data "talos_machine_configuration" "worker" {
@@ -63,9 +84,10 @@ data "talos_machine_configuration" "worker" {
   talos_version      = var.talos_version
   kubernetes_version = var.kubernetes_version
 
-  config_patches = [
+  config_patches = compact([
     local.cluster_shared_patch,
-  ]
+    local.kubelet_external_patch,
+  ])
 }
 
 # Client config (talosctl) targeting all control-plane endpoints.

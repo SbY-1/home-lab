@@ -36,3 +36,12 @@ worker_nodes = {
 gitops_repo_url      = "https://github.com/<you>/home-lab.git"
 gitops_repo_revision = "main"
 # argocd_chart_version = "7.8.2"
+
+# --- Proxmox CSI (persistent storage). Tokens from the proxmox-iam stage:
+#     terraform -chdir=infrastructure/proxmox-iam output csi_token_id
+#     terraform -chdir=infrastructure/proxmox-iam output -raw csi_token_secret
+proxmox_csi_token_id     = "kubernetes-csi@pve!csi"
+proxmox_csi_token_secret = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+proxmox_region           = "homelab"  # any consistent label; topology region
+proxmox_csi_storage      = "local-lvm" # Proxmox storage that backs the PVs
+# storage_class_name     = "proxmox"

@@ -1,20 +1,37 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# One-time bootstrap of the least-privilege Terraform identity on Proxmox VE.
+# One-time bootstrap of the least-privilege identities on Proxmox VE, for when
+# you have no admin API token to run the Terraform proxmox-iam module with.
+# Run it AS root ON the Proxmox host (or: ssh root@pve bash -s < bootstrap-pveum.sh).
 #
-# Use this ALTERNATIVE to the Terraform module when you don't yet have any
-# admin API token to run Terraform with. Run it AS root ON the Proxmox host
-# (or via `ssh root@pve bash -s < bootstrap-pveum.sh`).
-#
-# It prints an API token at the end — put that into
-# infrastructure/talos-cluster/terraform.tfvars : proxmox_api_token
+# It creates and prints TWO tokens:
+#   1) terraform@pve!provisioner  -> infrastructure/terraform.tfvars : proxmox_api_token
+#   2) kubernetes-csi@pve!csi      -> infrastructure/terraform.tfvars :
+#        proxmox_csi_token_id     = "kubernetes-csi@pve!csi"
+#        proxmox_csi_token_secret = <the value printed>
 # ---------------------------------------------------------------------------
 set -euo pipefail
+
+# Avoid perl/pveum locale warnings when a locale is forwarded over SSH.
+export LC_ALL=C LANG=C
+
+# Recreate a token idempotently: Proxmox only reveals the secret at creation,
+# and `token add` errors if it exists — so remove first, then add (prints value).
+recreate_token() { # <user> <tokenid>
+  pveum user token remove "$1" "$2" >/dev/null 2>&1 || true
+  pveum user token add "$1" "$2" --privsep 0
+}
 
 ROLE_ID="${ROLE_ID:-TerraformProv}"
 USER_ID="${USER_ID:-terraform@pve}"
 TOKEN_ID="${TOKEN_ID:-provisioner}"
 ACL_PATH="${ACL_PATH:-/}"
+
+# Proxmox CSI + cloud-controller-manager identity (persistent storage).
+CSI_ROLE_ID="${CSI_ROLE_ID:-CSI}"
+CSI_USER_ID="${CSI_USER_ID:-kubernetes-csi@pve}"
+CSI_TOKEN_ID="${CSI_TOKEN_ID:-csi}"
+CSI_PRIVS="VM.Audit VM.Config.Disk Datastore.Allocate Datastore.AllocateSpace Datastore.Audit Sys.Audit"
 
 # Proxmox VE 9 privilege changes:
 #  - VM.Monitor was REMOVED (folded into Sys.Audit/Sys.Modify).
@@ -37,5 +54,25 @@ echo ">> Granting ${ROLE_ID} on ${ACL_PATH}"
 pveum acl modify "${ACL_PATH}" -user "${USER_ID}" -role "${ROLE_ID}"
 
 echo ">> Creating API token ${USER_ID}!${TOKEN_ID} (privilege separation off)"
-echo "   Copy the value below into terraform.tfvars (proxmox_api_token):"
-pveum user token add "${USER_ID}" "${TOKEN_ID}" --privsep 0
+echo "   Set in terraform.tfvars (note the format is tokenid=value):"
+echo "     proxmox_api_token = \"${USER_ID}!${TOKEN_ID}=<the 'value' printed below>\""
+recreate_token "${USER_ID}" "${TOKEN_ID}"
+
+# ---------------------------------------------------------------------------
+# Proxmox CSI + cloud-controller-manager identity (persistent storage).
+# ---------------------------------------------------------------------------
+echo ">> Creating role ${CSI_ROLE_ID}"
+pveum role add "${CSI_ROLE_ID}" -privs "${CSI_PRIVS}" 2>/dev/null \
+  || pveum role modify "${CSI_ROLE_ID}" -privs "${CSI_PRIVS}"
+
+echo ">> Creating user ${CSI_USER_ID}"
+pveum user add "${CSI_USER_ID}" --comment "Proxmox CSI + CCM identity" 2>/dev/null || true
+
+echo ">> Granting ${CSI_ROLE_ID} on / (propagate)"
+pveum acl modify / -user "${CSI_USER_ID}" -role "${CSI_ROLE_ID}"
+
+echo ">> Creating API token ${CSI_USER_ID}!${CSI_TOKEN_ID} (privilege separation off)"
+echo "   Set in terraform.tfvars:"
+echo "     proxmox_csi_token_id     = \"${CSI_USER_ID}!${CSI_TOKEN_ID}\""
+echo "     proxmox_csi_token_secret = <the 'value' printed below>"
+recreate_token "${CSI_USER_ID}" "${CSI_TOKEN_ID}"

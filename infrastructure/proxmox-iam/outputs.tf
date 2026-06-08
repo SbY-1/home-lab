@@ -15,3 +15,15 @@ output "tf_api_token" {
   value       = proxmox_virtual_environment_user_token.terraform.value
   sensitive   = true
 }
+
+# --- Proxmox CSI / CCM identity → feed into the main stack ---
+output "csi_token_id" {
+  description = "CSI token id, e.g. 'kubernetes-csi@pve!csi' (-> proxmox_csi_token_id)."
+  value       = proxmox_virtual_environment_user_token.csi.id
+}
+
+output "csi_token_secret" {
+  description = "CSI token secret (-> proxmox_csi_token_secret)."
+  value       = element(split("=", proxmox_virtual_environment_user_token.csi.value), 1)
+  sensitive   = true
+}

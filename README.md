@@ -108,3 +108,4 @@ becomes the source of truth** — add tools by committing under `gitops/applicat
 4. [ArgoCD bootstrap & app-of-apps](docs/04-argocd-bootstrap.md)
 5. [First GitOps tool: kube-prometheus-stack](docs/05-gitops-prometheus.md)
 6. [Day-2 operations: scale, upgrade, teardown](docs/06-operations.md)
+7. [Persistent storage (Proxmox CSI)](docs/07-storage.md)

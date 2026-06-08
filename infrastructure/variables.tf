@@ -180,3 +180,35 @@ variable "gitops_root_path" {
   type        = string
   default     = "gitops/argocd"
 }
+
+# ---------------------------------------------------------------------------
+# Proxmox CSI / CCM (persistent storage). Token from the proxmox-iam stage.
+# ---------------------------------------------------------------------------
+variable "proxmox_csi_token_id" {
+  description = "CSI token id from proxmox-iam, e.g. 'kubernetes-csi@pve!csi'."
+  type        = string
+}
+
+variable "proxmox_csi_token_secret" {
+  description = "CSI token secret from proxmox-iam."
+  type        = string
+  sensitive   = true
+}
+
+variable "proxmox_region" {
+  description = "Logical Proxmox cluster name used as the CSI/CCM topology region (any consistent value)."
+  type        = string
+  default     = "homelab"
+}
+
+variable "proxmox_csi_storage" {
+  description = "Proxmox storage ID that backs persistent volumes (e.g. 'local-lvm')."
+  type        = string
+  default     = "local-lvm"
+}
+
+variable "storage_class_name" {
+  description = "Name of the default StorageClass created by the Proxmox CSI."
+  type        = string
+  default     = "proxmox"
+}

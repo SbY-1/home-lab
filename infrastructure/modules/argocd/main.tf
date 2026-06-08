@@ -15,6 +15,20 @@ resource "helm_release" "argocd" {
   # wait=true so the Application CRD is established before the root app below.
   wait    = true
   timeout = 600
+
+  values = [
+    yamlencode({
+      configs = {
+        cm = {
+          # Use Server-Side Diff for all apps: diffing is delegated to the
+          # kube-apiserver's schema instead of ArgoCD's older bundled schema.
+          # Fixes "field not declared in schema" errors (e.g. status.terminatingReplicas)
+          # that the structured-merge diff hits with ServerSideApply on newer K8s.
+          "controller.diff.server.side" = "true"
+        }
+      }
+    })
+  ]
 }
 
 # 2) Create the app-of-apps root Application in a SEPARATE release that runs

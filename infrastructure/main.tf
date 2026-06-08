@@ -47,6 +47,24 @@ module "talos" {
   talosconfig_path = "${path.root}/talosconfig"
 }
 
+module "proxmox_csi" {
+  source     = "./modules/proxmox-csi"
+  depends_on = [module.talos] # cluster up (+ kubelet external cloud provider)
+
+  providers = {
+    helm       = helm.cluster
+    kubernetes = kubernetes.cluster
+  }
+
+  proxmox_url          = "${trimsuffix(var.proxmox_endpoint, "/")}/api2/json"
+  proxmox_insecure     = var.proxmox_insecure
+  proxmox_token_id     = var.proxmox_csi_token_id
+  proxmox_token_secret = var.proxmox_csi_token_secret
+  region               = var.proxmox_region
+  proxmox_storage      = var.proxmox_csi_storage
+  storage_class_name   = var.storage_class_name
+}
+
 module "argocd" {
   source     = "./modules/argocd"
   depends_on = [module.talos] # cluster (and Cilium) must be up first
