@@ -21,7 +21,7 @@ spec:
       targetRevision: 70.4.1
       helm:
         valueFiles:
-          - $values/gitops/applications/monitoring/kube-prometheus-stack/values.yaml
+          - $values/gitops/components/kube-prometheus-stack/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

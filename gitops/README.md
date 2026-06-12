@@ -8,12 +8,15 @@ gitops/
 │   ├── projects/      AppProjects (platform, monitoring) — logical separation/RBAC
 │   ├── apps/          The app-of-apps: one ArgoCD Application per component/tool
 │   └── applicationsets/  (reserved for future multi-app / multi-env generators)
-├── components/        Platform building blocks
-│   ├── cilium/manifests/   CiliumLoadBalancerIPPool + L2 announcement policy
-│   ├── ingress-nginx/      Helm values for the ingress controller
-│   └── cert-manager/       Helm values for cert-manager
-└── applications/      Deployed tools
-    └── monitoring/kube-prometheus-stack/   Helm values (Prometheus/Grafana/Alertmanager)
+├── components/        Per-component Helm values / raw manifests (one dir each)
+│   ├── cilium/manifests/      CiliumLoadBalancerIPPool + L2 announcement policy
+│   ├── ingress-nginx/         Helm values for the ingress controller
+│   ├── cert-manager/          Helm values for cert-manager
+│   ├── external-dns/          Helm values (Pi-hole provider)
+│   ├── sealed-secrets/        Helm values (secrets controller)
+│   ├── metrics-server/        Helm values
+│   └── kube-prometheus-stack/ Helm values (Prometheus/Grafana/Alertmanager)
+└── secrets/           Committed SealedSecret manifests (encrypted)
 ```
 
 ## How it fits together
@@ -42,5 +45,5 @@ Use the **same** URL in `infrastructure/terraform.tfvars` (`gitops_repo_url`).
 
 ## Adding a new tool
 
-Drop a `values.yaml` under `applications/<area>/<tool>/`, add one Application manifest in
+Drop a `values.yaml` under `components/<tool>/`, add one Application manifest in
 `gitops/argocd/apps/<tool>.yaml`, commit, push. ArgoCD does the rest.

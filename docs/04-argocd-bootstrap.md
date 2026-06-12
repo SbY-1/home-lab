@@ -25,7 +25,7 @@ root (Terraform)  ──▶  gitops/argocd/
                                 ├── cilium-config        → gitops/components/cilium/manifests
                                 ├── ingress-nginx        → Helm + gitops/components/ingress-nginx
                                 ├── cert-manager         → Helm + gitops/components/cert-manager
-                                └── kube-prometheus-stack → Helm + gitops/applications/...
+                                └── kube-prometheus-stack → Helm + gitops/components/kube-prometheus-stack
 ```
 
 After the apply, Terraform's job is done — new tools are added by committing to Git, not by

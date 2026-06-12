@@ -8,7 +8,7 @@ Grafana, Alertmanager, node-exporter, kube-state-metrics).
 | File | Role |
 |------|------|
 | `gitops/argocd/apps/kube-prometheus-stack.yaml` | ArgoCD Application (chart ref + sync policy), project `monitoring` |
-| `gitops/applications/monitoring/kube-prometheus-stack/values.yaml` | Helm values (retention, resources, Grafana ingress) |
+| `gitops/components/kube-prometheus-stack/values.yaml` | Helm values (retention, resources, Grafana ingress) |
 
 The Application is **multi-source**: the chart comes from the prometheus-community Helm repo,
 the values come from this repo via the `$values` reference.
@@ -66,7 +66,7 @@ namespace `pod-security.kubernetes.io/enforce: privileged` via ArgoCD
 
 ## Adding the next tool
 
-1. `gitops/applications/<area>/<tool>/values.yaml`
+1. `gitops/components/<tool>/values.yaml`
 2. `gitops/argocd/apps/<tool>.yaml` (Application; pick a project + sync-wave)
 3. Commit & push — ArgoCD deploys it.
 

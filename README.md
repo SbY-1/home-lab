@@ -25,8 +25,8 @@ running on **Proxmox VE**, provisioned with **Terraform** and configured with **
             ▼
    ArgoCD (Terraform-bootstrapped Helm) ── root "app-of-apps" → this Git repo
             │
-            ├─ gitops/components/    (Cilium runtime config, ingress, cert-manager)
-            └─ gitops/applications/  (kube-prometheus-stack = first tool)
+            └─ gitops/components/    (Cilium config, ingress, DNS, storage,
+                                      secrets, metrics, kube-prometheus-stack…)
 ```
 
 The control-plane endpoint is a **Talos VIP**, so adding control-plane nodes later is just a
@@ -42,8 +42,8 @@ map entry — no re-architecture.
 | `infrastructure/modules/talos/` | Talos machine config, Cilium inline manifest, bootstrap, kubeconfig. |
 | `infrastructure/modules/argocd/` | Installs ArgoCD via Helm + the root app-of-apps. |
 | `gitops/argocd/` | Root Application, AppProjects, ApplicationSets. |
-| `gitops/components/` | Platform building blocks (Cilium config, ingress, cert-manager). |
-| `gitops/applications/` | Deployed tools (kube-prometheus-stack first). |
+| `gitops/components/` | Per-component Helm values / manifests (Cilium, ingress, DNS, storage, secrets, metrics, kube-prometheus-stack…). |
+| `gitops/secrets/` | Committed SealedSecret manifests (encrypted). |
 | `docs/` | Step-by-step guides for every stage. |
 
 > **Why is `proxmox-iam` separate?** It mints the API token the main stack authenticates with,
@@ -94,7 +94,7 @@ terraform output -raw argocd_initial_admin_password
 ```
 
 After the apply, ArgoCD reconciles `gitops/` (Cilium config, ingress, Prometheus) and **Git
-becomes the source of truth** — add tools by committing under `gitops/applications/`. See
+becomes the source of truth** — add tools by committing under `gitops/components/`. See
 [`docs/05-gitops-prometheus.md`](docs/05-gitops-prometheus.md).
 
 > Already ran the old per-stage layout? See
