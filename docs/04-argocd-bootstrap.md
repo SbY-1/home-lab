@@ -45,6 +45,12 @@ terraform -chdir=infrastructure output -raw argocd_initial_admin_password   # lo
 
 ## Access the UI
 
+If `argocd_hostname` is set (default `argocd.home`), the ArgoCD UI is exposed via
+ingress-nginx and external-dns publishes the record to Pi-hole — just open
+**http://argocd.home** (user: `admin`). The server runs with `server.insecure=true` so nginx
+routes plain HTTP (no gRPC-over-TLS redirect loop); add TLS later via cert-manager if desired.
+
+Set `argocd_hostname = ""` to disable the ingress and use port-forward instead:
 ```bash
 kubectl -n argocd port-forward svc/argocd-server 8080:443
 # open https://localhost:8080  (user: admin)

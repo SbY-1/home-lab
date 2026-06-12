@@ -110,3 +110,4 @@ becomes the source of truth** — add tools by committing under `gitops/applicat
 6. [Day-2 operations: scale, upgrade, teardown](docs/06-operations.md)
 7. [Persistent storage (Proxmox CSI)](docs/07-storage.md)
 8. [external-dns → Pi-hole](docs/08-external-dns.md)
+9. [Sealed Secrets](docs/09-sealed-secrets.md)

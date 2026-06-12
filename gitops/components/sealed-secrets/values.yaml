@@ -1,0 +1,17 @@
+# Sealed Secrets controller. Lets you commit ENCRYPTED SealedSecret manifests to
+# git; the controller decrypts them into regular Secrets in-cluster. The private
+# key never leaves the cluster.
+#
+# fullnameOverride makes the controller Deployment/Service "sealed-secrets-controller",
+# which matches the kubeseal CLI's default --controller-name.
+fullnameOverride: sealed-secrets-controller
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+# Scrape controller metrics with kube-prometheus-stack.
+metrics:
+  serviceMonitor:
+    enabled: true
