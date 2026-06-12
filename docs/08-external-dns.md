@@ -25,8 +25,9 @@ delete it in Pi-hole if needed).
    (`--pihole-server=http://<your-pi-hole>`), and the `domainFilters` if your domain isn't `home`.
    Keep `--pihole-api-version=6` for Pi-hole v6; remove it for v5.
 
-2. **Create the password Secret** (kept out of git — use your Pi-hole *web/admin* password, or an
-   app password on v6). Create the namespace first so it exists before the pod starts:
+2. **Provide the password Secret.** Preferred: commit it as a **SealedSecret** under
+   `gitops/secrets/` (see [09](09-sealed-secrets.md)) so it's GitOps-managed. Quick alternative
+   (not in git):
    ```bash
    kubectl create namespace external-dns
    kubectl -n external-dns create secret generic external-dns-pihole \

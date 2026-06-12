@@ -8,6 +8,12 @@ variable "argocd_chart_version" {
   type        = string
 }
 
+variable "argocd_hostname" {
+  description = "Hostname for the ArgoCD UI ingress (empty disables the ingress)."
+  type        = string
+  default     = ""
+}
+
 variable "gitops_repo_url" {
   description = "HTTPS URL of the GitOps repository ArgoCD syncs from."
   type        = string

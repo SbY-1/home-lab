@@ -164,6 +164,12 @@ variable "argocd_chart_version" {
   default     = "7.8.2"
 }
 
+variable "argocd_hostname" {
+  description = "Hostname for the ArgoCD UI ingress (empty disables it). external-dns publishes it to Pi-hole."
+  type        = string
+  default     = "argocd.home"
+}
+
 variable "gitops_repo_url" {
   description = "HTTPS URL of the GitOps repository ArgoCD syncs from."
   type        = string

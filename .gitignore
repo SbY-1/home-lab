@@ -22,7 +22,6 @@ talosconfig
 *.talosconfig
 *.secret
 *.secret.yaml
-secrets.yaml
 # generated SSH private keys
 ssh-*.key
 *.pem

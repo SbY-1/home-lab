@@ -35,6 +35,7 @@ worker_nodes = {
 # --- ArgoCD / GitOps ---
 gitops_repo_url      = "https://github.com/<you>/home-lab.git"
 gitops_repo_revision = "main"
+argocd_hostname      = "argocd.home" # UI ingress host (external-dns publishes it to Pi-hole); "" to disable
 # argocd_chart_version = "7.8.2"
 
 # --- Proxmox CSI (persistent storage). Tokens from the proxmox-iam stage:

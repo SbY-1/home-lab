@@ -76,6 +76,7 @@ module "argocd" {
 
   argocd_namespace     = var.argocd_namespace
   argocd_chart_version = var.argocd_chart_version
+  argocd_hostname      = var.argocd_hostname
   gitops_repo_url      = var.gitops_repo_url
   gitops_repo_revision = var.gitops_repo_revision
   gitops_root_path     = var.gitops_root_path

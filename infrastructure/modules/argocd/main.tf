@@ -25,10 +25,28 @@ resource "helm_release" "argocd" {
         # diff hits with ServerSideApply on newer Kubernetes.
         # NOTE: this key lives in argocd-cmd-params-cm (configs.params), NOT argocd-cm,
         # and the chart restarts the application-controller when it changes.
-        params = {
-          "controller.diff.server.side" = "true"
-        }
+        params = merge(
+          {
+            "controller.diff.server.side" = "true"
+          },
+          # Serve plain HTTP so the nginx ingress routes without gRPC-over-TLS
+          # redirect loops (also points the ingress template at the HTTP port).
+          var.argocd_hostname != "" ? { "server.insecure" = "true" } : {}
+        )
       }
+
+      # Expose the ArgoCD UI via ingress-nginx (external-dns publishes the host
+      # to Pi-hole). Only rendered when a hostname is provided.
+      server = var.argocd_hostname != "" ? {
+        ingress = {
+          enabled          = true
+          ingressClassName = "nginx"
+          hostname         = var.argocd_hostname
+          path             = "/"
+          pathType         = "Prefix"
+          tls              = false
+        }
+      } : {}
     })
   ]
 }

@@ -11,5 +11,7 @@ output "initial_admin_password" {
 
 output "access_hint" {
   description = "How to reach the ArgoCD UI."
-  value       = "kubectl -n ${var.argocd_namespace} port-forward svc/argocd-server 8080:443  # then https://localhost:8080"
+  value = var.argocd_hostname != "" ? "http://${var.argocd_hostname}" : (
+    "kubectl -n ${var.argocd_namespace} port-forward svc/argocd-server 8080:443  # then https://localhost:8080"
+  )
 }

@@ -51,11 +51,24 @@ kubectl create secret generic external-dns-pihole -n external-dns \
 
 ## Applying SealedSecrets via GitOps
 
-For ArgoCD to apply a committed `SealedSecret`, it must be in a path an Application syncs. The
-external-dns app is Helm-only, so either:
-- keep the `kubeseal | kubectl apply -f -` manual step, **or**
-- add a small directory-source Application that applies `SealedSecret` manifests from a path
-  (ask and I'll wire one up).
+Commit sealed manifests under [`gitops/secrets/`](../gitops/secrets/) named
+`*.sealedsecret.yaml`. The **`secrets`** Application (`gitops/argocd/apps/secrets.yaml`) is a
+directory source that applies them (sync-wave `-1`, after the controller). Each SealedSecret
+declares its own `metadata.namespace`, so one folder feeds Secrets to any namespace.
+
+```bash
+# seal directly into the folder, then commit:
+kubectl create secret generic external-dns-pihole -n external-dns \
+  --from-literal=EXTERNAL_DNS_PIHOLE_PASSWORD='<pw>' --dry-run=client -o yaml \
+| kubeseal --format yaml \
+    --controller-namespace sealed-secrets --controller-name sealed-secrets-controller \
+> gitops/secrets/external-dns-pihole.sealedsecret.yaml
+git add gitops/secrets && git commit -m "seal pihole password" && git push
+```
+
+ArgoCD applies the SealedSecret → the controller unseals it into the `external-dns-pihole`
+Secret → you can drop the manual `kubectl create secret` from [08](08-external-dns.md).
+See [`gitops/secrets/external-dns-pihole.sealedsecret.yaml.example`](../gitops/secrets/external-dns-pihole.sealedsecret.yaml.example).
 
 ## ⚠️ Back up the sealing key
 
