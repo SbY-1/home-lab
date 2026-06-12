@@ -1,0 +1,15 @@
+# metrics-server — resource metrics for `kubectl top` and HPA.
+#
+# Talos kubelets serve metrics with self-signed certs (no cluster-CA-signed
+# serving cert by default), so metrics-server must skip kubelet TLS verification.
+args:
+  - --kubelet-insecure-tls
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+
+# Scrape metrics-server's own metrics with kube-prometheus-stack.
+serviceMonitor:
+  enabled: true
