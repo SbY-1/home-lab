@@ -5,10 +5,10 @@ Everything in the cluster (beyond the bootstrap) is declared here and reconciled
 ```
 gitops/
 ├── argocd/
-│   ├── projects/      AppProjects (platform, monitoring) — logical separation/RBAC
-│   ├── apps/          The app-of-apps: one ArgoCD Application per component/tool
+│   ├── projects/      AppProjects (platform, monitoring, apps) — logical separation/RBAC
+│   ├── apps/          The app-of-apps: one ArgoCD Application per component/app
 │   └── applicationsets/  (reserved for future multi-app / multi-env generators)
-├── components/        Per-component Helm values / raw manifests (one dir each)
+├── components/        Cluster TOOLING / addons (platform building blocks)
 │   ├── cilium/manifests/      CiliumLoadBalancerIPPool + L2 announcement policy
 │   ├── ingress-nginx/         Helm values for the ingress controller
 │   ├── cert-manager/          Helm values for cert-manager
@@ -16,8 +16,14 @@ gitops/
 │   ├── sealed-secrets/        Helm values (secrets controller)
 │   ├── metrics-server/        Helm values
 │   └── kube-prometheus-stack/ Helm values (Prometheus/Grafana/Alertmanager)
+├── applications/      Real user-facing APPLICATIONS (project: apps)
+│   └── home-assistant/        Helm values (Home Assistant)
 └── secrets/           Committed SealedSecret manifests (encrypted)
 ```
+
+**`components/` vs `applications/`** — `components/` is cluster tooling/addons (CNI, ingress,
+DNS, storage, secrets, observability) in the `platform`/`monitoring` projects; `applications/`
+is the actual workloads you run (e.g. Home Assistant) in the `apps` project.
 
 ## How it fits together
 
@@ -43,7 +49,11 @@ grep -rl 'github.com/CHANGEME/home-lab' gitops \
 
 Use the **same** URL in `infrastructure/terraform.tfvars` (`gitops_repo_url`).
 
-## Adding a new tool
+## Adding something new
 
-Drop a `values.yaml` under `components/<tool>/`, add one Application manifest in
-`gitops/argocd/apps/<tool>.yaml`, commit, push. ArgoCD does the rest.
+- **Cluster tool/addon** → `components/<tool>/values.yaml`, Application in
+  `gitops/argocd/apps/<tool>.yaml` with `project: platform` (or `monitoring`).
+- **Real application** → `applications/<app>/values.yaml`, Application in
+  `gitops/argocd/apps/<app>.yaml` with `project: apps`.
+
+Then commit + push — ArgoCD does the rest.

@@ -1,0 +1,36 @@
+# Home Assistant — home automation hub.
+
+# Persistent /config (settings + SQLite history) on the Proxmox CSI StorageClass.
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  storageClass: proxmox
+
+# Write a sane configuration.yaml on first init, including the http
+# trusted_proxies block so HA accepts requests via the ingress (otherwise it
+# returns HTTP 400 behind a reverse proxy). forceInit stays false so HA's own
+# UI-managed config is never clobbered. The chart's default trusted_proxies
+# (10.0.0.0/8, ...) already covers the Talos pod CIDR 10.244.0.0/16.
+configuration:
+  enabled: true
+  forceInit: false
+
+# Exposed via ingress-nginx; external-dns publishes the host to Pi-hole.
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: home-assistant.home
+      paths:
+        - path: /
+          pathType: Prefix
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi

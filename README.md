@@ -42,7 +42,8 @@ map entry — no re-architecture.
 | `infrastructure/modules/talos/` | Talos machine config, Cilium inline manifest, bootstrap, kubeconfig. |
 | `infrastructure/modules/argocd/` | Installs ArgoCD via Helm + the root app-of-apps. |
 | `gitops/argocd/` | Root Application, AppProjects, ApplicationSets. |
-| `gitops/components/` | Per-component Helm values / manifests (Cilium, ingress, DNS, storage, secrets, metrics, kube-prometheus-stack…). |
+| `gitops/components/` | Cluster tooling/addons (Cilium, ingress, DNS, storage, secrets, metrics, kube-prometheus-stack…). |
+| `gitops/applications/` | Real user-facing apps (Home Assistant…). |
 | `gitops/secrets/` | Committed SealedSecret manifests (encrypted). |
 | `docs/` | Step-by-step guides for every stage. |
 
@@ -111,3 +112,4 @@ becomes the source of truth** — add tools by committing under `gitops/componen
 7. [Persistent storage (Proxmox CSI)](docs/07-storage.md)
 8. [external-dns → Pi-hole](docs/08-external-dns.md)
 9. [Sealed Secrets](docs/09-sealed-secrets.md)
+10. [Home Assistant](docs/10-home-assistant.md)
