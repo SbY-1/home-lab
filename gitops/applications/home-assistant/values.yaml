@@ -1,5 +1,9 @@
 # Home Assistant — home automation hub.
 
+# Pin the resource base name so the PVC volume is deterministically
+# "home-assistant-pvc" (referenced by the HACS init container below).
+fullnameOverride: home-assistant
+
 # Persistent /config (settings + SQLite history) on the Proxmox CSI StorageClass.
 persistence:
   enabled: true
@@ -47,7 +51,9 @@ initContainers:
         unzip -o -q /tmp/hacs.zip -d /config/custom_components/hacs
         echo "HACS installed"
     volumeMounts:
-      - name: config-volume
+      # the persistent /config PVC (NOT 'config-volume', which is the read-only
+      # configuration ConfigMap).
+      - name: home-assistant-pvc
         mountPath: /config
 
 service:
