@@ -26,6 +26,30 @@ ingress:
         - path: /
           pathType: Prefix
 
+# Install HACS (Home Assistant Community Store) into /config/custom_components
+# before HA starts. Idempotent: skips if already present (HACS then self-updates
+# from within the UI, so we never overwrite the user's version).
+initContainers:
+  - name: install-hacs
+    image: alpine:3.20
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        if [ -f /config/custom_components/hacs/manifest.json ]; then
+          echo "HACS already installed"; exit 0
+        fi
+        apk add --no-cache curl unzip
+        mkdir -p /config/custom_components/hacs
+        curl -fsSL -o /tmp/hacs.zip \
+          https://github.com/hacs/integration/releases/latest/download/hacs.zip
+        unzip -o -q /tmp/hacs.zip -d /config/custom_components/hacs
+        echo "HACS installed"
+    volumeMounts:
+      - name: config-volume
+        mountPath: /config
+
 service:
   type: ClusterIP
   port: 8080

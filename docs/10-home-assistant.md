@@ -31,6 +31,30 @@ dig +short home-assistant.home @192.168.30.53     # external-dns -> Pi-hole reco
 
 Open **http://home-assistant.home** and complete the onboarding wizard.
 
+## HACS (Home Assistant Community Store)
+
+HACS is a custom integration installed into `/config/custom_components/hacs`. An **init
+container** (`install-hacs`, in the values) downloads the latest HACS release into the config
+volume before HA starts — idempotent (skips if already present; HACS self-updates from the UI
+afterward, so it's never overwritten).
+
+After the pod is running, finish setup in the UI (one-time, interactive — it can't be automated
+because it needs your GitHub login):
+
+1. **Settings → Devices & Services → Add Integration → "HACS"**.
+2. Tick the acknowledgement boxes, then complete the **GitHub device authorization**
+   (it shows a code + opens github.com/login/device).
+3. HACS appears in the sidebar; you can now install community integrations/cards.
+
+Verify the files landed:
+```bash
+kubectl -n home-assistant exec deploy/home-assistant -- ls /config/custom_components/hacs
+kubectl -n home-assistant logs deploy/home-assistant -c install-hacs   # "HACS installed"
+```
+
+> The init container needs egress to `github.com` to download the release — fine on a normal
+> LAN. HACS itself also reaches the GitHub API at runtime to list/install community content.
+
 ## Notes
 
 - **Single replica / RWO volume** — HA is stateful (SQLite); don't scale it past 1.
