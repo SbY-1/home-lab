@@ -4,6 +4,10 @@ controller:
   replicaCount: 1
   service:
     type: LoadBalancer
+    annotations:
+      # Let other LoadBalancer Services (e.g. UniFi 8080/3478) share this IP.
+      lbipam.cilium.io/sharing-key: "ingress"
+      lbipam.cilium.io/sharing-cross-namespace: "*"
     # Optionally pin a specific IP from the Cilium pool:
     # loadBalancerIP: 192.168.1.200
   ingressClassResource:

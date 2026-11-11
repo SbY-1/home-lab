@@ -1,3 +1,18 @@
+# Device inform (8080/TCP) and STUN (3478/UDP) must be reachable directly by
+# UniFi devices. Expose them as LoadBalancer Services that share the
+# ingress-nginx IP via Cilium LB-IPAM (same sharing-key, no port overlap).
+service:
+  comm:
+    type: LoadBalancer
+    annotations:
+      lbipam.cilium.io/sharing-key: "ingress"
+      lbipam.cilium.io/sharing-cross-namespace: "*"
+  stun:
+    type: LoadBalancer
+    annotations:
+      lbipam.cilium.io/sharing-key: "ingress"
+      lbipam.cilium.io/sharing-cross-namespace: "*"
+
 ingress:
   main:
     enabled: true
