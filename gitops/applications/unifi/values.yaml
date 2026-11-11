@@ -2,6 +2,10 @@ ingress:
   main:
     enabled: true
     ingressClassName: nginx
+    annotations:
+      # UniFi only serves HTTPS on 8443 (self-signed); tell nginx to speak TLS upstream
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
     targetSelector:
       main: main
     hosts:
