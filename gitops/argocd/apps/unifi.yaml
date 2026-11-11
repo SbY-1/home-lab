@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: unifi
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: apps
+  sources:
+    - repoURL: https://github.com/SbY-1/home-lab.git
+      targetRevision: main
+      ref: values
+    - repoURL: oci://oci.trueforge.org/truecharts
+      chart: unifi
+      targetRevision: 27.1.4
+      helm:
+        valueFiles:
+          - $values/gitops/applications/unifi/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: unifi
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

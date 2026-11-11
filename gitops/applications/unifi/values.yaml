@@ -1,0 +1,11 @@
+ingress:
+  main:
+    enabled: true
+    ingressClassName: nginx
+    targetSelector:
+      main: main
+    hosts:
+      - host: unifi.home
+        paths:
+          - path: /
+            pathType: Prefix
